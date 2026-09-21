@@ -1,4 +1,23 @@
+import Image from "next/image";
 import PointerWash from "@/components/PointerWash";
+
+const socials = [
+  {
+    href: "https://www.instagram.com/aalipirani",
+    src: "/instagram.svg",
+    label: "Instagram",
+  },
+  {
+    href: "https://github.com/aaliyahpirani",
+    src: "/github.svg",
+    label: "GitHub",
+  },
+  {
+    href: "https://www.linkedin.com/aaliyahpirani",
+    src: "/linkedin.svg",
+    label: "LinkedIn",
+  },
+];
 
 export default function Footer() {
   return (
@@ -9,24 +28,25 @@ export default function Footer() {
           © 2026 Aaliyah Pirani
         </p>
 
-        <div data-fade-item data-fade-index="1" className="flex gap-3 text-xs sm:gap-6 sm:text-base">
-          <a
-            href="https://www.instagram.com/aalipirani"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Instagram
-          </a>
-          <a href="https://github.com/aaliyahpirani" target="_blank" rel="noopener noreferrer">
-            GitHub
-          </a>
-          <a
-            href="https://www.linkedin.com/aaliyahpirani"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            LinkedIn
-          </a>
+        <div data-fade-item data-fade-index="1" className="flex items-center gap-4 sm:gap-6">
+          {socials.map((social) => (
+            <a
+              key={social.label}
+              href={social.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={social.label}
+              className="transition-opacity hover:opacity-80"
+            >
+              <Image
+                src={social.src}
+                alt={social.label}
+                width={24}
+                height={24}
+                className="h-5 w-5 sm:h-6 sm:w-6"
+              />
+            </a>
+          ))}
         </div>
       </div>
     </footer>

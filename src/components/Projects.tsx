@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import PointerWash from "@/components/PointerWash";
 
 const projectImages = [
@@ -51,48 +51,154 @@ const projects = [
     title: "Deformable materials simulation",
     date: "May 2026–present",
     description:
-      "GPU-accelerated simulation built using FlexiCubes and NVIDIA Warp, extending an existing deformable-body pipeline that included stretching and sculpting functionality with a tearing force model to reproduce soft-tissue rupture during surgery and laser ablation. Used to visualize skin tearing and train robotic manipulation policies at the MedCVR Lab, University of Toronto.",
-    tech: "Python, NVIDIA Warp, FlexiCubes, CUDA",
+      "GPU-accelerated soft-tissue simulation at the MedCVR Lab, built on FlexiCubes and NVIDIA Warp. I added a tearing force model so mesh can rupture under tension, for surgical visualization and robot-training data.",
+    tech: ["Python", "NVIDIA Warp", "FlexiCubes", "CUDA"],
   },
   {
     title: "Palate",
     date: "January 2026",
     description:
-      "Group dining app that resolves restaurant deadlocks through a five-stage session: preference capture, vibe check, AI keyword generation, parallel swipe filtering, and blind voting. Post-meal feedback aggregates per-cuisine and per-tag statistics into each user's profile, sharpening Gemini's matchmaking suggestion prompts over time.",
-    tech: "Next.js, Node.js, Gemini API, MongoDB, Python",
+      "Group dining app that settles restaurant deadlocks in five stages: preferences, vibe check, Gemini keywords, swipe filtering, and a blind vote. After the meal, cuisine and tag feedback sharpens the next suggestion.",
+    tech: ["Next.js", "Node.js", "Gemini API", "MongoDB", "Python"],
   },
   {
     title: "SnackOverflow",
     date: "November–December 2025",
     description:
-      "Team recipe app built in Java by six developers, structured around Clean Architecture and SOLID principles. Integrates the Spoonacular API for search and discovery, with account-based saving, custom recipe creation, portion editing, tagging, meal planning, and dietary filtering — my first large-scale exposure to layered design and maintainable object-oriented code.",
-    tech: "Java, MongoDB, Spoonacular API, Clean Architecture, OOP",
+      "Six-person Java recipe app structured around Clean Architecture, with Spoonacular search, saved recipes, meal planning, and dietary filters. My first large object-oriented codebase built to stay maintainable.",
+    tech: ["Java", "MongoDB", "Spoonacular API", "Clean Architecture", "OOP"],
   },
   {
     title: "Bear With Me",
     date: "November 2025",
     description:
-      "Pronunciation analysis tool for young children with speech difficulties, embedded in a stuffed bear via Raspberry Pi to keep interaction off screens. Captures speech through an onboard microphone, evaluates pronunciation with Azure's Speech Pronunciation Assessment API, and responds using ElevenLabs text-to-speech and a connected microphone. Includes a parent dashboard for tracking progress over time.",
-    tech: "Raspberry Pi, Azure API, ElevenLabs API, Python",
+      "Pronunciation practice for young children, hidden in a stuffed bear. A Raspberry Pi listens, Azure scores speech, and ElevenLabs answers aloud, with a parent dashboard for progress off the screen.",
+    tech: ["Raspberry Pi", "Azure API", "ElevenLabs API", "Python"],
   },
   {
     title: "Neural network from scratch",
     date: "2025",
     description:
-      "Personal project built out of curiosity — a feedforward neural network implemented with only NumPy, using sigmoid activations, backpropagation, and stochastic gradient descent. Trained on the MNIST handwritten digit dataset; my first hands-on entry into machine learning and how networks learn from data.",
-    tech: "Python, NumPy, Machine learning",
+      "A feedforward network written in NumPy only—sigmoid activations, backpropagation, and SGD—trained on MNIST. Built to understand how a network actually learns, without a framework in the way.",
+    tech: ["Python", "NumPy", "Machine learning"],
   },
   {
     title: "Aqualens",
     date: "2024–2025",
     description:
-      "Flutter mobile app built with Engineers Without Borders UofT in partnership with CGEN, used by water quality testers in Mexico to capture and store field measurements. Designed for intuitive on-the-ground use in low-friction workflows; I owned the login and authentication system and contributed to the broader UX for reliable data entry and storage.",
-    tech: "Dart, Flutter",
+      "Flutter field app with Engineers Without Borders UofT and CGEN for water-quality testers in Mexico. I owned login and authentication and helped keep capture and storage simple on the ground.",
+    tech: ["Dart", "Flutter"],
   },
 ];
 
+type Project = (typeof projects)[number];
+
 function formatAmount(amount: string) {
   return `$${Number(amount).toLocaleString("en-CA")}`;
+}
+
+function ProjectPopOut({
+  project,
+  onClose,
+}: {
+  project: Project;
+  onClose: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const closingRef = useRef(false);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
+  const beginClose = () => {
+    if (closingRef.current) return;
+    closingRef.current = true;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      onCloseRef.current();
+      return;
+    }
+    setOpen(false);
+    window.setTimeout(() => onCloseRef.current(), 450);
+  };
+
+  useEffect(() => {
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const frame = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setOpen(true));
+    });
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") beginClose();
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKey);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 sm:px-8 sm:py-10"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="project-popout-title"
+    >
+      <button
+        type="button"
+        aria-label="Close project details"
+        className={`project-popout-backdrop absolute inset-0 bg-background/35 ${open ? "is-open" : ""}`}
+        onClick={beginClose}
+      />
+      <article
+        className={`project-popout-panel relative z-[1] w-full max-w-2xl overflow-hidden rounded-3xl border border-accent-red bg-background shadow-[8px_8px_0_0_#45151b] ${open ? "is-open" : ""}`}
+      >
+        <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl">
+          <img
+            src="/transparent_flower.webp"
+            alt=""
+            className="project-popout-flower absolute -right-6 -top-4 h-36 w-auto max-w-none opacity-30"
+          />
+        </div>
+        <div className="relative z-[1] px-10 py-10 sm:px-14 sm:py-12">
+          <div className="flex items-start justify-between gap-6">
+            <p className="font-garamond text-sm tracking-wide text-accent-mauve">
+              {project.date}
+            </p>
+            <button
+              type="button"
+              onClick={beginClose}
+              aria-label="Close"
+              className="relative z-[1] px-1 font-garamond text-2xl leading-none text-accent-red"
+            >
+              ×
+            </button>
+          </div>
+          <h3
+            id="project-popout-title"
+            className="mt-5 max-w-[18ch] font-playfair text-3xl leading-tight text-accent-red sm:text-4xl"
+          >
+            {project.title}
+          </h3>
+          <div className="mt-7 flex flex-wrap gap-3">
+            {project.tech.map((item) => (
+              <span
+                key={item}
+                className="border border-accent-red bg-background px-3 py-1 font-garamond text-sm text-accent-red shadow-[4px_4px_0_0_#45151b]"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+          <p className="mt-7 min-h-[9rem] font-serif text-sm leading-relaxed text-foreground sm:min-h-[11rem] sm:text-base">
+            {project.description}
+          </p>
+        </div>
+      </article>
+    </div>
+  );
 }
 
 function ProjectPhotoStrip() {
@@ -165,6 +271,8 @@ function ProjectPhotoStrip() {
 }
 
 export default function Projects() {
+  const [openProject, setOpenProject] = useState<Project | null>(null);
+
   return (
     <section className="flex min-h-screen flex-col">
       <ProjectPhotoStrip />
@@ -191,23 +299,34 @@ export default function Projects() {
 
         <div className="relative z-[2] mt-12 flex w-full max-w-7xl flex-col gap-10 pb-8 md:flex-row md:gap-12 md:overflow-x-scroll projects-scroll">
           {projects.map((project, index) => (
-            <article
+            <button
               key={project.title}
+              type="button"
               data-fade-item
               data-fade-index={index + 2}
-              className="w-full md:w-[calc((100%-6rem)/3)] md:shrink-0"
+              onClick={() => setOpenProject(project)}
+              className="w-full cursor-pointer text-left md:w-[calc((100%-6rem)/3)] md:shrink-0"
             >
               <h3 className="font-serif text-2xl text-accent-red">
                 {project.title}
               </h3>
               <h4 className="font-serif text-foreground">{project.date}</h4>
-              <p className="mt-3 font-serif leading-relaxed text-foreground">
+              <p className="mt-3 line-clamp-4 font-serif leading-relaxed text-foreground">
                 {project.description}
               </p>
-            </article>
+              <span className="mt-4 inline-block font-serif text-sm text-accent-mauve">
+                Read more
+              </span>
+            </button>
           ))}
         </div>
       </div>
+      {openProject ? (
+        <ProjectPopOut
+          project={openProject}
+          onClose={() => setOpenProject(null)}
+        />
+      ) : null}
       <div
         id="awards"
         data-fade-group
