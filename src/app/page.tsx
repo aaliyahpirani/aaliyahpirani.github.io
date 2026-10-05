@@ -3,6 +3,7 @@ import HomeSection from "@/components/Home";
 import AboutMe from "@/components/AboutMe";
 import Projects from "@/components/Projects";
 import Experience from "@/components/Experience";
+import UgcPortfolio from "@/components/UgcPortfolio";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import FadeScroll from "@/components/FadeScroll";
@@ -21,6 +22,8 @@ export default function Home() {
         <Projects />
 
         <Experience />
+
+        <UgcPortfolio />
 
         <Contact />
       </main>

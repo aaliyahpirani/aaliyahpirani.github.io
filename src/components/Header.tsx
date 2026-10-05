@@ -68,6 +68,9 @@ export default function Header() {
           <a href="#experience" className="nav-hover nav-hover--track">
             Experience
           </a>
+          <a href="#ugc" className="nav-hover nav-hover--track">
+            UGC
+          </a>
         </div>
       </nav>
     </header>

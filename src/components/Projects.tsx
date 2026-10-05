@@ -50,43 +50,62 @@ const projects = [
   {
     title: "Deformable materials simulation",
     date: "May 2026–present",
-    description:
-      "GPU-accelerated soft-tissue simulation at the MedCVR Lab, built on FlexiCubes and NVIDIA Warp. I added a tearing force model so mesh can rupture under tension, for surgical visualization and robot-training data.",
+    summary: "GPU-accelerated soft-tissue simulation for training robots to do surgery using RL.",
+    details: [
+      "A research project at the Medical Computer Vision and Robotics Lab (MedCVR) at the University of Toronto, simulating soft tissue on the GPU with NVIDIA Warp and FlexiCubes. The simulations are used for surgical visualization and to generate training data for robots.",
+      "I added a tearing force model so the mesh can rupture under tension. Using the Newton Physics Engine's native solver APIs, I also ported an external finite element method (FEM) solver into Newton, so soft bodies can be simulated in the same engine as Newton's built-in solvers.",
+      "Coupling callbacks in Python apply contact forces from the FEM solve back to Newton's rigid bodies, which enables self-collision and rigid-soft collision. I'm now evaluating FEM against the existing vertex block descent solver to see whether it's viable for reinforcement learning robot policy training, and working toward an adaptive grid for the underlying mesh for higher precision.",
+    ],
     tech: ["Python", "NVIDIA Warp", "FlexiCubes", "CUDA"],
   },
   {
     title: "Palate",
     date: "January 2026",
-    description:
-      "Group dining app that settles restaurant deadlocks in five stages: preferences, vibe check, Gemini keywords, swipe filtering, and a blind vote. After the meal, cuisine and tag feedback sharpens the next suggestion.",
+    summary: "A tinder-style app that settles where your friend group should eat.",
+    details: [
+      "A group dining app for the moment nobody can agree on where to eat. Palate breaks the decision into five stages: everyone shares their preferences, the group does a vibe check, Gemini generates keywords from the group's input, everyone swipes to filter the options, and a blind vote picks the restaurant.",
+      "After the meal, feedback on the cuisine and tags feeds back into the app, so the next suggestion is sharper. Built with Next.js, Node.js, MongoDB, Python and the Gemini API.",
+    ],
     tech: ["Next.js", "Node.js", "Gemini API", "MongoDB", "Python"],
   },
   {
     title: "SnackOverflow",
     date: "November–December 2025",
-    description:
-      "Six-person Java recipe app structured around Clean Architecture, with Spoonacular search, saved recipes, meal planning, and dietary filters. My first large object-oriented codebase built to stay maintainable.",
+    summary: "An app to store, add, edit, and save recipes customized to your pantry.",
+    details: [
+      "A Java Swing desktop recipe tracker built with five teammates. Users can search for new recipes through the Spoonacular API, save and bookmark recipes, plan meals and filter by dietary needs, with all user data stored in MongoDB.",
+      "We structured the app around Clean Architecture and worked through GitHub pull requests, so each of us could build features independently without breaking each other's work. It was my first large object-oriented codebase, designed to stay maintainable as it grew.",
+    ],
     tech: ["Java", "MongoDB", "Spoonacular API", "Clean Architecture", "OOP"],
   },
   {
     title: "Bear With Me",
     date: "November 2025",
-    description:
-      "Pronunciation practice for young children, hidden in a stuffed bear. A Raspberry Pi listens, Azure scores speech, and ElevenLabs answers aloud, with a parent dashboard for progress off the screen.",
+    summary: "A pronunciation practice tool hidden inside a stuffed bear.",
+    details: [
+      "Pronunciation practice for young children, hidden inside a stuffed bear so practice happens off the screen. A Raspberry Pi with a microphone and speaker listens to the child, sends the audio to Azure Speech for pronunciation scoring, uses Gemini to generate feedback and track progress, and answers aloud with ElevenLabs text-to-speech.",
+      "A companion Node.js web app pulls the Gemini-generated progress reports, so parents and caregivers can check in remotely.",
+    ],
     tech: ["Raspberry Pi", "Azure API", "ElevenLabs API", "Python"],
   },
   {
     title: "Neural network from scratch",
     date: "2025",
-    description:
-      "A feedforward network written in NumPy only—sigmoid activations, backpropagation, and SGD—trained on MNIST. Built to understand how a network actually learns, without a framework in the way.",
+    summary: "A NumPy-only network trained on MNIST.",
+    details: [
+      "A feedforward neural network written using only NumPy, with no machine learning framework. It uses sigmoid activations, backpropagation and stochastic gradient descent (SGD), and is trained on the MNIST dataset of handwritten digits.",
+      "I built it to understand how a network actually learns, by writing each step myself instead of letting a framework do it for me.",
+    ],
     tech: ["Python", "NumPy", "Machine learning"],
   },
   {
     title: "Aqualens",
     date: "2024–2025",
-    description:
-      "Flutter field app with Engineers Without Borders UofT and CGEN for water-quality testers in Mexico. I owned login and authentication and helped keep capture and storage simple on the ground.",
+    summary: "Water-quality field app for testers in Mexico.",
+    details: [
+      "A Flutter mobile app built with Engineers Without Borders UofT and CGEN for water-quality testers working in the field in Mexico.",
+      "I owned login and authentication, and helped keep data capture and storage simple for testers working on the ground.",
+    ],
     tech: ["Dart", "Flutter"],
   },
 ];
@@ -153,7 +172,7 @@ function ProjectPopOut({
         onClick={beginClose}
       />
       <article
-        className={`project-popout-panel relative z-[1] w-full max-w-2xl overflow-hidden rounded-3xl border border-accent-red bg-background shadow-[8px_8px_0_0_#45151b] ${open ? "is-open" : ""}`}
+        className={`project-popout-panel relative z-[1] max-h-full w-full max-w-2xl overflow-y-auto lg:max-w-3xl rounded-3xl border border-accent-red bg-background shadow-[8px_8px_0_0_#45151b] ${open ? "is-open" : ""}`}
       >
         <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl">
           <img
@@ -192,9 +211,11 @@ function ProjectPopOut({
               </span>
             ))}
           </div>
-          <p className="mt-7 min-h-[9rem] font-serif text-sm leading-relaxed text-foreground sm:min-h-[11rem] sm:text-base">
-            {project.description}
-          </p>
+          <div className="mt-7 min-h-[9rem] space-y-4 font-serif text-sm leading-relaxed text-foreground sm:min-h-[11rem] sm:text-base">
+            {project.details.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
         </div>
       </article>
     </div>
@@ -311,8 +332,8 @@ export default function Projects() {
                 {project.title}
               </h3>
               <h4 className="font-serif text-foreground">{project.date}</h4>
-              <p className="mt-3 line-clamp-4 font-serif leading-relaxed text-foreground">
-                {project.description}
+              <p className="mt-3 line-clamp-2 font-serif leading-relaxed text-foreground">
+                {project.summary}
               </p>
               <span className="mt-4 inline-block font-serif text-sm text-accent-mauve">
                 Read more

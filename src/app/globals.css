@@ -6,7 +6,7 @@
   --foreground: #171717;
   --accent_red: #45151b;
   --accent_mauve: #955155;
-  --accent_yellow: #FFF7d6;
+  --accent_yellow: #FFF2DE;
 }
 
 @theme inline {
@@ -375,31 +375,39 @@ body {
   }
 }
 
-.projects-scroll::-webkit-scrollbar {
+.projects-scroll::-webkit-scrollbar,
+.ugc-scroll::-webkit-scrollbar {
   display: block;
   height: 8px;
   background: color-mix(in srgb, var(--accent_mauve) 25%, var(--background));
 }
 
-.projects-scroll::-webkit-scrollbar-track {
+.projects-scroll::-webkit-scrollbar-track,
+.ugc-scroll::-webkit-scrollbar-track {
   background: transparent;
   border: 1px solid color-mix(in srgb, var(--accent_mauve) 40%, var(--background));
   border-radius: 9999px;
 }
 
 .projects-scroll:hover::-webkit-scrollbar-track,
-.projects-scroll:active::-webkit-scrollbar-track {
+.projects-scroll:active::-webkit-scrollbar-track,
+.ugc-scroll:hover::-webkit-scrollbar-track,
+.ugc-scroll:active::-webkit-scrollbar-track {
   border-color: var(--accent_mauve);
 }
 
-.projects-scroll::-webkit-scrollbar-thumb {
+.projects-scroll::-webkit-scrollbar-thumb,
+.ugc-scroll::-webkit-scrollbar-thumb {
   background: color-mix(in srgb, var(--accent_red) 40%, var(--background));
   border-radius: 9999px;
 }
 
 .projects-scroll:hover::-webkit-scrollbar-thumb,
 .projects-scroll::-webkit-scrollbar-thumb:hover,
-.projects-scroll::-webkit-scrollbar-thumb:active {
+.projects-scroll::-webkit-scrollbar-thumb:active,
+.ugc-scroll:hover::-webkit-scrollbar-thumb,
+.ugc-scroll::-webkit-scrollbar-thumb:hover,
+.ugc-scroll::-webkit-scrollbar-thumb:active {
   background: var(--accent_red);
 }
 
@@ -518,14 +526,17 @@ body {
 }
 
 @supports (-moz-appearance: none) {
-  .projects-scroll {
+  .projects-scroll,
+  .ugc-scroll {
     scrollbar-width: thin;
     scrollbar-color: color-mix(in srgb, var(--accent_red) 40%, var(--background))
       color-mix(in srgb, var(--accent_mauve) 25%, var(--background));
   }
 
   .projects-scroll:hover,
-  .projects-scroll:active {
+  .projects-scroll:active,
+  .ugc-scroll:hover,
+  .ugc-scroll:active {
     scrollbar-color: var(--accent_red) var(--accent_mauve);
   }
 }
